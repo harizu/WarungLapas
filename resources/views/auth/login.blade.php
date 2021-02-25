@@ -70,7 +70,9 @@
                 </p>
             @endif
             <p class="mb-1">
-
+                <a class="text-center" href="{{ route('register') }}">
+                    {{ trans('global.register') }}
+                </a>
             </p>
         </div>
         <!-- /.login-card-body -->

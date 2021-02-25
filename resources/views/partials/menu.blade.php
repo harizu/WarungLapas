@@ -122,29 +122,42 @@
                         </ul>
                     </li>
                 @endcan
-                @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
-                    @can('profile_password_edit')
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->is('profile/password') || request()->is('profile/password/*') ? 'active' : '' }}" href="{{ route('profile.password.edit') }}">
-                                <i class="fa-fw fas fa-key nav-icon">
-                                </i>
-                                <p>
-                                    {{ trans('global.change_password') }}
-                                </p>
-                            </a>
-                        </li>
-                    @endcan
-                @endif
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
-                        <p>
-                            <i class="fas fa-fw fa-sign-out-alt nav-icon">
+                @php($unread = \App\Models\QaTopic::unreadCount())
+                    <li class="nav-item">
+                        <a href="{{ route("admin.messenger.index") }}" class="{{ request()->is("admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }} nav-link">
+                            <i class="fa-fw fa fa-envelope nav-icon">
 
                             </i>
-                            <p>{{ trans('global.logout') }}</p>
-                        </p>
-                    </a>
-                </li>
+                            <p>{{ trans('global.messages') }}</p>
+                            @if($unread > 0)
+                                <strong>( {{ $unread }} )</strong>
+                            @endif
+
+                        </a>
+                    </li>
+                    @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
+                        @can('profile_password_edit')
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('profile/password') || request()->is('profile/password/*') ? 'active' : '' }}" href="{{ route('profile.password.edit') }}">
+                                    <i class="fa-fw fas fa-key nav-icon">
+                                    </i>
+                                    <p>
+                                        {{ trans('global.change_password') }}
+                                    </p>
+                                </a>
+                            </li>
+                        @endcan
+                    @endif
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+                            <p>
+                                <i class="fas fa-fw fa-sign-out-alt nav-icon">
+
+                                </i>
+                                <p>{{ trans('global.logout') }}</p>
+                            </p>
+                        </a>
+                    </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
