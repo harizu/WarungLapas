@@ -2,41 +2,38 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Produk;
+use App\Models\Penjualan;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 
-class UpdateProdukRequest extends FormRequest
+class UpdatePenjualanRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('produk_edit');
+        return Gate::allows('penjualan_edit');
     }
 
     public function rules()
     {
         return [
-            'seller_id'       => [
+            'trx_no'      => [
+                'string',
+                'required',
+                'unique:penjualans,trx_no,' . request()->route('penjualan')->id,
+            ],
+            'product_id'  => [
                 'required',
                 'integer',
             ],
-            'kategori_produk' => [
-                'required',
-            ],
-            'nama_produk'     => [
-                'string',
-                'min:1',
-                'max:20',
-                'required',
-            ],
-            'qty'             => [
+            'qty'         => [
                 'required',
                 'integer',
                 'min:-2147483648',
                 'max:2147483647',
             ],
-            'harga'           => [
+            'total_price' => [
+                'string',
                 'required',
             ],
         ];

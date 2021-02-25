@@ -10,16 +10,55 @@ use App\Models\Seller;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Yajra\DataTables\Facades\DataTables;
 
 class SellerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('seller_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $sellers = Seller::all();
+        if ($request->ajax()) {
+            $query = Seller::query()->select(sprintf('%s.*', (new Seller)->table));
+            $table = Datatables::of($query);
 
-        return view('admin.sellers.index', compact('sellers'));
+            $table->addColumn('placeholder', '&nbsp;');
+            $table->addColumn('actions', '&nbsp;');
+
+            $table->editColumn('actions', function ($row) {
+                $viewGate      = 'seller_show';
+                $editGate      = 'seller_edit';
+                $deleteGate    = 'seller_delete';
+                $crudRoutePart = 'sellers';
+
+                return view('partials.datatablesActions', compact(
+                    'viewGate',
+                    'editGate',
+                    'deleteGate',
+                    'crudRoutePart',
+                    'row'
+                ));
+            });
+
+            $table->editColumn('id', function ($row) {
+                return $row->id ? $row->id : "";
+            });
+            $table->editColumn('nama_seller', function ($row) {
+                return $row->nama_seller ? $row->nama_seller : "";
+            });
+            $table->editColumn('alamat_seller', function ($row) {
+                return $row->alamat_seller ? $row->alamat_seller : "";
+            });
+            $table->editColumn('nomor_telp', function ($row) {
+                return $row->nomor_telp ? $row->nomor_telp : "";
+            });
+
+            $table->rawColumns(['actions', 'placeholder']);
+
+            return $table->make(true);
+        }
+
+        return view('admin.sellers.index');
     }
 
     public function create()

@@ -25,8 +25,14 @@ class Produk extends Model implements HasMedia
         'deleted_at',
     ];
 
+    const KATEGORI_PRODUK_SELECT = [
+        'Warung Basah'  => 'Warung Basah',
+        'Warung Kering' => 'Warung Kering',
+    ];
+
     protected $fillable = [
         'seller_id',
+        'kategori_produk',
         'nama_produk',
         'qty',
         'harga',
