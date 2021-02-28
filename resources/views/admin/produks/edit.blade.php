@@ -23,6 +23,19 @@
                 <span class="help-block">{{ trans('cruds.produk.fields.seller_helper') }}</span>
             </div>
             <div class="form-group">
+                <label class="required">{{ trans('cruds.produk.fields.kategori_produk') }}</label>
+                <select class="form-control {{ $errors->has('kategori_produk') ? 'is-invalid' : '' }}" name="kategori_produk" id="kategori_produk" required>
+                    <option value disabled {{ old('kategori_produk', null) === null ? 'selected' : '' }}>{{ trans('global.pleaseSelect') }}</option>
+                    @foreach(App\Models\Produk::KATEGORI_PRODUK_SELECT as $key => $label)
+                        <option value="{{ $key }}" {{ old('kategori_produk', $produk->kategori_produk) === (string) $key ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+                @if($errors->has('kategori_produk'))
+                    <span class="text-danger">{{ $errors->first('kategori_produk') }}</span>
+                @endif
+                <span class="help-block">{{ trans('cruds.produk.fields.kategori_produk_helper') }}</span>
+            </div>
+            <div class="form-group">
                 <label class="required" for="nama_produk">{{ trans('cruds.produk.fields.nama_produk') }}</label>
                 <input class="form-control {{ $errors->has('nama_produk') ? 'is-invalid' : '' }}" type="text" name="nama_produk" id="nama_produk" value="{{ old('nama_produk', $produk->nama_produk) }}" required>
                 @if($errors->has('nama_produk'))

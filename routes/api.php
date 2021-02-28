@@ -20,4 +20,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', '
     // Produks
     Route::post('produks/media', 'ProdukApiController@storeMedia')->name('produks.storeMedia');
     Route::apiResource('produks', 'ProdukApiController');
+
+    // Penjualans
+    Route::apiResource('penjualans', 'PenjualanApiController');
 });

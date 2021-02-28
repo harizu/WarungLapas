@@ -138,6 +138,38 @@ class PermissionsTableSeeder extends Seeder
             ],
             [
                 'id'    => 33,
+                'title' => 'transaksi_access',
+            ],
+            [
+                'id'    => 34,
+                'title' => 'penjualan_create',
+            ],
+            [
+                'id'    => 35,
+                'title' => 'penjualan_edit',
+            ],
+            [
+                'id'    => 36,
+                'title' => 'penjualan_show',
+            ],
+            [
+                'id'    => 37,
+                'title' => 'penjualan_delete',
+            ],
+            [
+                'id'    => 38,
+                'title' => 'penjualan_access',
+            ],
+            [
+                'id'    => 39,
+                'title' => 'belanja_access',
+            ],
+            [
+                'id'    => 40,
+                'title' => 'pembelian_access',
+            ],
+            [
+                'id'    => 41,
                 'title' => 'profile_password_edit',
             ],
         ];

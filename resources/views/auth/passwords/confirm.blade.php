@@ -26,7 +26,7 @@
     <div class="lockscreen-wrapper">
         <div class="lockscreen-logo">
             <a href="{{ route('admin.home') }}">
-                {{ trans('panel.site_title') }}
+                <img src="{{ asset(config('panel.logo'))}}" width="180px" />
             </a>
         </div>
 
