@@ -3,8 +3,8 @@
 <div class="login-box">
     <div class="login-logo">
         <div class="login-logo">
-            <a href="#">
-                {{ trans('panel.site_title') }}
+            <a href="{{ route('admin.home') }}">
+                <img src="{{ asset(config('panel.logo'))}}" width="180px" />
             </a>
         </div>
     </div>
