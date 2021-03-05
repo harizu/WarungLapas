@@ -68,4 +68,9 @@ class Produk extends Model implements HasMedia
 
         return $files;
     }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('qty', '>', 0);
+    }
 }
