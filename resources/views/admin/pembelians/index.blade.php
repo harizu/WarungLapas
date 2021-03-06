@@ -10,6 +10,7 @@
         <div class="row">
             <div class="col-md-6 offset-md-3">
                 <form>
+                    <h3>STEP 1 : Pilih Warga Binaan</h3>
                     <div class="input-group">
                         <input type="search" id="nomor-registrasi" class="form-control" placeholder="Masukkan nomor registrasi warga binaan">
                         <div class="input-group-append">

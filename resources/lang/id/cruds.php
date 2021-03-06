@@ -174,7 +174,7 @@ return [
         'title_singular' => 'Belanja',
     ],
     'pembelian'      => [
-        'title'          => 'Pembelian',
-        'title_singular' => 'Pembelian',
+        'title'          => 'Pemesanan',
+        'title_singular' => 'Pemesanan',
     ],
 ];

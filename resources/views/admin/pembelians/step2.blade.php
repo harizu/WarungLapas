@@ -15,6 +15,11 @@
 
     <div class="card-body">
         <div class="row">
+            <div class="col-md-6">
+                    <h3>STEP 2 : Masukan Pesanan Anda</h3>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-12">
                 <form id="pembelian-step-2" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
@@ -22,8 +27,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <a href="#" data-toggle="modal" data-target="#modal-tambah-pesanan" class="btn btn-success float-right" role="button">Tambah Pesanan</a>
-                            <label class="control-label d-block">Pesanan Untuk :</label>
-                            <span>{{ $warga_binaan['nomor_registrasi'] }}</span> | <span>{{ $warga_binaan['nama'] }}</span>
+                            <label class="control-label d-block">Pesanan Untuk : <strong><span>{{ $warga_binaan['nama'] }}</span> (<span>{{ $warga_binaan['nomor_registrasi'] }}</span>)</strong></label>
+                            
                         </div>
                         <div class="col-md-12 mt-2">
                             <table class="table">
