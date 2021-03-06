@@ -15,76 +15,30 @@
     </div>
 
     <div class="card-body">
-        <div class="table-responsive">
-            <table class=" table table-bordered table-striped table-hover datatable datatable-Seller">
-                <thead>
-                    <tr>
-                        <th width="10">
+        <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Seller">
+            <thead>
+                <tr>
+                    <th width="10">
 
-                        </th>
-                        <th>
-                            {{ trans('cruds.seller.fields.id') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.seller.fields.nama_seller') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.seller.fields.alamat_seller') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.seller.fields.nomor_telp') }}
-                        </th>
-                        <th>
-                            &nbsp;
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($sellers as $key => $seller)
-                        <tr data-entry-id="{{ $seller->id }}">
-                            <td>
-
-                            </td>
-                            <td>
-                                {{ $seller->id ?? '' }}
-                            </td>
-                            <td>
-                                {{ $seller->nama_seller ?? '' }}
-                            </td>
-                            <td>
-                                {{ $seller->alamat_seller ?? '' }}
-                            </td>
-                            <td>
-                                {{ $seller->nomor_telp ?? '' }}
-                            </td>
-                            <td>
-                                @can('seller_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.sellers.show', $seller->id) }}">
-                                        {{ trans('global.view') }}
-                                    </a>
-                                @endcan
-
-                                @can('seller_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.sellers.edit', $seller->id) }}">
-                                        {{ trans('global.edit') }}
-                                    </a>
-                                @endcan
-
-                                @can('seller_delete')
-                                    <form action="{{ route('admin.sellers.destroy', $seller->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                    </form>
-                                @endcan
-
-                            </td>
-
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </th>
+                    <th>
+                        {{ trans('cruds.seller.fields.id') }}
+                    </th>
+                    <th>
+                        {{ trans('cruds.seller.fields.nama_seller') }}
+                    </th>
+                    <th>
+                        {{ trans('cruds.seller.fields.alamat_seller') }}
+                    </th>
+                    <th>
+                        {{ trans('cruds.seller.fields.nomor_telp') }}
+                    </th>
+                    <th>
+                        &nbsp;
+                    </th>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
@@ -97,14 +51,14 @@
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
 @can('seller_delete')
-  let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
+  let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
     url: "{{ route('admin.sellers.massDestroy') }}",
     className: 'btn-danger',
     action: function (e, dt, node, config) {
-      var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
-          return $(entry).data('entry-id')
+      var ids = $.map(dt.rows({ selected: true }).data(), function (entry) {
+          return entry.id
       });
 
       if (ids.length === 0) {
@@ -126,18 +80,32 @@
   dtButtons.push(deleteButton)
 @endcan
 
-  $.extend(true, $.fn.dataTable.defaults, {
+  let dtOverrideGlobals = {
+    buttons: dtButtons,
+    processing: true,
+    serverSide: true,
+    retrieve: true,
+    aaSorting: [],
+    ajax: "{{ route('admin.sellers.index') }}",
+    columns: [
+      { data: 'placeholder', name: 'placeholder' },
+{ data: 'id', name: 'id' },
+{ data: 'nama_seller', name: 'nama_seller' },
+{ data: 'alamat_seller', name: 'alamat_seller' },
+{ data: 'nomor_telp', name: 'nomor_telp' },
+{ data: 'actions', name: '{{ trans('global.actions') }}' }
+    ],
     orderCellsTop: true,
     order: [[ 1, 'desc' ]],
     pageLength: 100,
-  });
-  let table = $('.datatable-Seller:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+  };
+  let table = $('.datatable-Seller').DataTable(dtOverrideGlobals);
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
   
-})
+});
 
 </script>
 @endsection

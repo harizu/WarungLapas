@@ -33,6 +33,14 @@
                     </tr>
                     <tr>
                         <th>
+                            {{ trans('cruds.produk.fields.kategori_produk') }}
+                        </th>
+                        <td>
+                            {{ App\Models\Produk::KATEGORI_PRODUK_SELECT[$produk->kategori_produk] ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             {{ trans('cruds.produk.fields.nama_produk') }}
                         </th>
                         <td>

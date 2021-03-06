@@ -13,6 +13,7 @@ class CreateProduksTable extends Migration
             $table->string('nama_produk');
             $table->integer('qty');
             $table->decimal('harga', 15, 2);
+            $table->string('kategori_produk');
             $table->timestamps();
             $table->softDeletes();
         });

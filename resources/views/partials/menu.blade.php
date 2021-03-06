@@ -11,6 +11,7 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route("admin.home") }}">
                         <i class="fas fa-fw fa-tachometer-alt nav-icon">
@@ -98,7 +99,7 @@
                             @can('seller_access')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.sellers.index") }}" class="nav-link {{ request()->is("admin/sellers") || request()->is("admin/sellers/*") ? "active" : "" }}">
-                                        <i class="fa-fw nav-icon fas fa-cogs">
+                                        <i class="fa-fw nav-icon fab fa-sellsy">
 
                                         </i>
                                         <p>
@@ -119,6 +120,72 @@
                                     </a>
                                 </li>
                             @endcan
+                        </ul>
+                    </li>
+                @endcan
+                @can('transaksi_access')
+                    <li class="nav-item has-treeview {{ request()->is("admin/penjualans*") ? "menu-open" : "" }}">
+                        <a class="nav-link nav-dropdown-toggle" href="#">
+                            <i class="fa-fw nav-icon fas fa-exchange-alt">
+
+                            </i>
+                            <p>
+                                {{ trans('cruds.transaksi.title') }}
+                                <i class="right fa fa-fw fa-angle-left nav-icon"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('penjualan_access')
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.penjualans.index") }}" class="nav-link {{ request()->is("admin/penjualans") || request()->is("admin/penjualans/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fas fa-chart-line">
+
+                                        </i>
+                                        <p>
+                                            {{ trans('cruds.penjualan.title') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
+                @can('belanja_access')
+                    <li class="nav-item has-treeview {{ request()->is("admin/pembelians*") ? "menu-open" : "" }}">
+                        <a class="nav-link nav-dropdown-toggle" href="#">
+                            <i class="fa-fw nav-icon fas fa-shopping-cart">
+
+                            </i>
+                            <p>
+                                {{ trans('cruds.belanja.title') }}
+                                <i class="right fa fa-fw fa-angle-left nav-icon"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('pembelian_access')
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.pembelians.index") }}" class="nav-link {{ request()->is("admin/pembelians") || request()->is("admin/pembelians/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fab fa-buysellads">
+
+                                        </i>
+                                        <p>
+                                            Pemesanan
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route("admin.pembelians.index") }}" class="nav-link {{ request()->is("admin/pembelians") || request()->is("admin/pembelians/*") ? "active" : "" }}">
+                                    <i class="fa-fw nav-icon fab fa-buysellads">
+
+                                    </i>
+                                    <p>
+                                        Riwayat Pemesanan
+                                    </p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 @endcan

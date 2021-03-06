@@ -13,18 +13,77 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProdukController extends Controller
 {
     use MediaUploadingTrait;
 
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('produk_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $produks = Produk::with(['seller', 'media'])->get();
+        if ($request->ajax()) {
+            $query = Produk::with(['seller'])->select(sprintf('%s.*', (new Produk)->table));
+            $table = Datatables::of($query);
 
-        return view('admin.produks.index', compact('produks'));
+            $table->addColumn('placeholder', '&nbsp;');
+            $table->addColumn('actions', '&nbsp;');
+
+            $table->editColumn('actions', function ($row) {
+                $viewGate      = 'produk_show';
+                $editGate      = 'produk_edit';
+                $deleteGate    = 'produk_delete';
+                $crudRoutePart = 'produks';
+
+                return view('partials.datatablesActions', compact(
+                    'viewGate',
+                    'editGate',
+                    'deleteGate',
+                    'crudRoutePart',
+                    'row'
+                ));
+            });
+
+            $table->editColumn('id', function ($row) {
+                return $row->id ? $row->id : "";
+            });
+            $table->addColumn('seller_nama_seller', function ($row) {
+                return $row->seller ? $row->seller->nama_seller : '';
+            });
+
+            $table->editColumn('kategori_produk', function ($row) {
+                return $row->kategori_produk ? Produk::KATEGORI_PRODUK_SELECT[$row->kategori_produk] : '';
+            });
+            $table->editColumn('nama_produk', function ($row) {
+                return $row->nama_produk ? $row->nama_produk : "";
+            });
+            $table->editColumn('qty', function ($row) {
+                return $row->qty ? $row->qty : "";
+            });
+            $table->editColumn('harga', function ($row) {
+                return $row->harga ? $row->harga : "";
+            });
+            $table->editColumn('foto_produk', function ($row) {
+                if (!$row->foto_produk) {
+                    return '';
+                }
+
+                $links = [];
+
+                foreach ($row->foto_produk as $media) {
+                    $links[] = '<a href="' . $media->getUrl() . '" target="_blank"><img src="' . $media->getUrl('thumb') . '" width="50px" height="50px"></a>';
+                }
+
+                return implode(' ', $links);
+            });
+
+            $table->rawColumns(['actions', 'placeholder', 'seller', 'foto_produk']);
+
+            return $table->make(true);
+        }
+
+        return view('admin.produks.index');
     }
 
     public function create()

@@ -17,23 +17,26 @@ class UpdateProdukRequest extends FormRequest
     public function rules()
     {
         return [
-            'seller_id'   => [
+            'seller_id'       => [
                 'required',
                 'integer',
             ],
-            'nama_produk' => [
+            'kategori_produk' => [
+                'required',
+            ],
+            'nama_produk'     => [
                 'string',
                 'min:1',
                 'max:20',
                 'required',
             ],
-            'qty'         => [
+            'qty'             => [
                 'required',
                 'integer',
                 'min:-2147483648',
                 'max:2147483647',
             ],
-            'harga'       => [
+            'harga'           => [
                 'required',
             ],
         ];
