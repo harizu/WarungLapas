@@ -3,125 +3,166 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MassDestroyPenjualanRequest;
-use App\Http\Requests\StorePenjualanRequest;
-use App\Http\Requests\UpdatePenjualanRequest;
-use App\Models\Penjualan;
+use App\Http\Requests\PostPembelianRequest;
 use App\Models\Produk;
+use App\Services\OrderService;
+use App\Services\ProdukService;
+use App\Services\WargaBinaanService;
+use DB;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatPembelianController extends Controller
 {
+    const STEP_1_SESSION_DATA_KEY = 'pembelian_step_1';
+
+    protected $orderService;
+    protected $produkService;
+    protected $wargaBinaanService;
+
+    public function __construct(OrderService $orderService, ProdukService $produkService, WargaBinaanService $wargaBinaanService)
+    {
+        $this->orderService       = $orderService;
+        $this->produkService      = $produkService;
+        $this->wargaBinaanService = $wargaBinaanService;
+    }
+
     public function index(Request $request)
     {
-        abort_if(Gate::denies('penjualan_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('pembelian_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        if ($request->ajax()) {
-            $query = Penjualan::with(['product'])->select(sprintf('%s.*', (new Penjualan)->table));
-            $table = Datatables::of($query);
-
-            $table->addColumn('placeholder', '&nbsp;');
-            $table->addColumn('actions', '&nbsp;');
-
-            $table->editColumn('actions', function ($row) {
-                $viewGate      = 'penjualan_show';
-                $editGate      = 'penjualan_edit';
-                $deleteGate    = 'penjualan_delete';
-                $crudRoutePart = 'penjualans';
-
-                return view('partials.datatablesActions', compact(
-                    'viewGate',
-                    'editGate',
-                    'deleteGate',
-                    'crudRoutePart',
-                    'row'
-                ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : "";
-            });
-            $table->editColumn('trx_no', function ($row) {
-                return $row->trx_no ? $row->trx_no : "";
-            });
-            $table->addColumn('product_nama_produk', function ($row) {
-                return $row->product ? $row->product->nama_produk : '';
-            });
-
-            $table->editColumn('qty', function ($row) {
-                return $row->qty ? $row->qty : "";
-            });
-            $table->editColumn('total_price', function ($row) {
-                return $row->total_price ? $row->total_price : "";
-            });
-
-            $table->rawColumns(['actions', 'placeholder', 'product']);
-
-            return $table->make(true);
+        if ($request->get('ref') !== 'step-1' && $data = session()->get(static::STEP_1_SESSION_DATA_KEY)) {
+            if (!empty($data['nomor_registrasi'])) {
+                return $this->postPembelianStep1($data['nomor_registrasi']);
+            }
         }
 
         return view('admin.riwayat-pembelians.index');
     }
 
-    public function create()
+    public function postPembelian(PostPembelianRequest $request)
     {
-        abort_if(Gate::denies('penjualan_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $data = $request->validated();
 
-        $products = Produk::all()->pluck('nama_produk', 'id')->prepend(trans('global.pleaseSelect'), '');
+        switch ($data['step']) {
+            case 1:
+                session([
+                    static::STEP_1_SESSION_DATA_KEY => [
+                        'nomor_registrasi' => $data['nomor_registrasi'],
+                    ],
+                ]);
 
-        return view('admin.riwayat-pembelians.create', compact('products'));
+                return $this->postPembelianStep1($data['nomor_registrasi']);
+                break;
+
+            case 2:
+                return $this->postPembelianStep2($data);
+                break;
+
+            default:
+                return abort(404);
+                break;
+        }
     }
 
-    public function store(StorePenjualanRequest $request)
+    private function postPembelianStep1(string $nomor_registrasi)
     {
-        $penjualan = Penjualan::create($request->all());
+        $warga_binaan = $this->wargaBinaanService->getWargaBinaanDetailByNomorRegistrasi($nomor_registrasi);
 
-        return redirect()->route('admin.riwayat-pembelians.index');
+        if (empty($warga_binaan)) {
+            session()->forget(static::STEP_1_SESSION_DATA_KEY);
+
+            return $this->index();
+        }
+
+        $list_kategori_produk = Produk::KATEGORI_PRODUK_SELECT;
+
+        return view('admin.riwayat-pembelians.step2', [
+            'warga_binaan'         => $warga_binaan,
+            'list_kategori_produk' => $list_kategori_produk,
+        ]);
     }
 
-    public function edit(Penjualan $penjualan)
+    private function postPembelianStep2(array $data)
     {
-        abort_if(Gate::denies('penjualan_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
 
-        $products = Produk::all()->pluck('nama_produk', 'id')->prepend(trans('global.pleaseSelect'), '');
+        DB::beginTransaction();
+        foreach ($data['item'] as $item) {
+            if (!$this->produkService->checkStockAvailability($item['id'], $item['qty'])) {
+                DB::rollback();
 
-        $penjualan->load('product');
+                $nama_produk = $this->produkService->getNamaProdukById($item['id']);
 
-        return view('admin.riwayat-pembelians.edit', compact('products', 'penjualan'));
+                return redirect()->back()->with('error', "Stok {$nama_produk} tidak tersedia.");
+            }
+        }
+
+        $data_step1 = session()->get(static::STEP_1_SESSION_DATA_KEY);
+
+        $user_id         = request()->user()->id;
+        $warga_binaan_id = $this->wargaBinaanService->getIdByNomorRegistrasi($data_step1['nomor_registrasi']);
+
+        if (!$order = $this->orderService->makeOrder($user_id, $warga_binaan_id, $data['biaya_layanan'], $data['item'])) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Terjadi kesalahan pada server. Coba kembali beberapa saat lagi');
+        }
+
+        DB::commit();
+
+        session()->forget(static::STEP_1_SESSION_DATA_KEY);
+
+        return redirect()->route('admin.riwayat-pembelians.success',[
+            'order_no'        => '#' . $order->order_no,
+            'total'           => $order->total_pembayaran,
+            'rekening_bank'   => config('transaction.rekening.bank'),
+            'rekening_no'     => config('transaction.rekening.no'),
+            'rekening_name'   => config('transaction.rekening.atas_nama'),
+            'payment_expired' => date('d M Y H:i:s'),
+        ]);
+        try {
+        } catch (\Throwable $t) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Terjadi kesalahan pada server. Coba kembali beberapa saat lagi');
+        }
     }
 
-    public function update(UpdatePenjualanRequest $request, Penjualan $penjualan)
+    public function getWargaBinaanByNomorRegistrasi(Request $request, string $nomor_registrasi)
     {
-        $penjualan->update($request->all());
+        abort_if(!$request->ajax(), Response::HTTP_NOT_FOUND, '404 Not Found');
 
-        return redirect()->route('admin.riwayat-pembelians.index');
+        abort_if(Gate::denies('pembelian_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $warga_binaan = $this->wargaBinaanService->getWargaBinaanDetailByNomorRegistrasi($nomor_registrasi);
+
+        return response()->json([
+            'result' => !empty($warga_binaan),
+            'data'   => $warga_binaan,
+        ]);
     }
 
-    public function show(Penjualan $penjualan)
+    public function getProdukListByKategori(Request $request, string $kategori)
     {
-        abort_if(Gate::denies('penjualan_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!$request->ajax(), Response::HTTP_NOT_FOUND, '404 Not Found');
 
-        $penjualan->load('product');
+        abort_if(Gate::denies('pembelian_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.riwayat-pembelians.show', compact('penjualan'));
+        $produk = $this->produkService->getAvailableProdukByKategori($kategori);
+
+        return response()->json([
+            'data' => $produk,
+        ]);
     }
 
-    public function destroy(Penjualan $penjualan)
+    public function success(Request $request)
     {
-        abort_if(Gate::denies('penjualan_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $penjualan->delete();
-
-        return back();
-    }
-
-    public function massDestroy(MassDestroyPenjualanRequest $request)
-    {
-        Penjualan::whereIn('id', request('ids'))->delete();
-
-        return response(null, Response::HTTP_NO_CONTENT);
+        if(count($request->all()) > 0)
+        {
+            return view('admin.riwayat-pembelians.success',$request->all());
+        }else{
+            return redirect()->route('admin.riwayat-pembelians.index');
+        }
     }
 }

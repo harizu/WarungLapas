@@ -151,7 +151,7 @@
                     </li>
                 @endcan
                 @can('belanja_access')
-                    <li class="nav-item has-treeview {{ request()->is("admin/pembelians*") ? "menu-open" : "" }} {{ request()->is("admin/riwayat-pembelians*") ? "menu-open" : "" }}">
+                    <li class="nav-item has-treeview {{ request()->is("admin/pembelians*") ? "menu-open" : "" }}">
                         <a class="nav-link nav-dropdown-toggle" href="#">
                             <i class="fa-fw nav-icon fas fa-shopping-cart">
 
