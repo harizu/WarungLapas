@@ -34,8 +34,7 @@ class PenjualanController extends Controller
 
         if ($request->ajax()) {
             $query = Order::with('wargaBinaan')
-                ->select('*')
-                ->where('user_id', $request->user()->id);
+                ->select('*');
 
             $table = Datatables::of($query);
 
