@@ -72,7 +72,7 @@ class OrderService
             return false;
         }
 
-        if ($order->status !== Order::STATUS_NEW_ORDER) {
+        if ($order->status != Order::STATUS_NEW_ORDER) {
             return false;
         }
 
@@ -87,7 +87,7 @@ class OrderService
             return false;
         }
 
-        if ($order->status !== Order::STATUS_NEW_ORDER) {
+        if ($order->status != Order::STATUS_NEW_ORDER) {
             return false;
         }
 
@@ -102,7 +102,7 @@ class OrderService
             return false;
         }
 
-        if ($order->status !== Order::STATUS_NEW_ORDER) {
+        if ($order->status != Order::STATUS_NEW_ORDER) {
             return false;
         }
 
@@ -113,7 +113,7 @@ class OrderService
 
     public function complete(Order $order)
     {
-        if ($order->status !== Order::STATUS_ON_PROCESS) {
+        if ($order->status != Order::STATUS_ON_PROCESS) {
             return false;
         }
 

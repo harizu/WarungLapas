@@ -48,7 +48,7 @@ class Order extends Model
 
     public function getIsExpiredAttribute()
     {
-        return ($this->status === static::STATUS_NEW_ORDER && (time() >= strtotime($this->expired_at)));
+        return ($this->status == static::STATUS_NEW_ORDER && (time() >= strtotime($this->expired_at)));
     }
 
     public function getStatusNameAttribute()

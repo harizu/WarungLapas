@@ -61,7 +61,7 @@ class PenjualanController extends Controller
                 return $row->created_at ? date('d M Y H:i:s', strtotime($row->created_at)) : "";
             });
             $table->editColumn('expired_at', function ($row) {
-                if ($row->status === Order::STATUS_NEW_ORDER) {
+                if ($row->status == Order::STATUS_NEW_ORDER) {
                     return $row->expired_at ? date('d M Y H:i:s', strtotime($row->expired_at)) : "";
                 }
 
