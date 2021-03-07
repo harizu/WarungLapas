@@ -177,8 +177,8 @@
                         </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route("admin.pembelians.index") }}" class="nav-link {{ request()->is("admin/pembelians") || request()->is("admin/pembelians/*") ? "active" : "" }}">
-                                    <i class="fa-fw nav-icon fab fa-buysellads">
+                                <a href="{{ route("admin.riwayat-pembelians.index") }}" class="nav-link {{ request()->is("admin/riwayat-pembelians") || request()->is("admin/riwayat-pembelians/*") ? "active" : "" }}">
+                                    <i class="fa-fw nav-icon fa fa-history">
 
                                     </i>
                                     <p>

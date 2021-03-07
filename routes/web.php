@@ -55,6 +55,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('pembelians/get-produk-by-kategori/{kategori}', 'PembelianController@getProdukListByKategori')->name('pembelians.get.produk.by.kategori');
     Route::get('pembelians/success', 'PembelianController@success')->name('pembelians.success');
 
+    // Riwayat Pembelians
+    Route::resource('riwayat-pembelians', 'RiwayatPembelianController', ['except' => ['create', 'store', 'edit', 'update', 'show', 'destroy']]);
+
     Route::get('messenger', 'MessengerController@index')->name('messenger.index');
     Route::get('messenger/create', 'MessengerController@createTopic')->name('messenger.createTopic');
     Route::post('messenger', 'MessengerController@storeTopic')->name('messenger.storeTopic');
