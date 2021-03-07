@@ -6,6 +6,7 @@ return [
     'allRightsReserved'                    => 'Semua hak dilindungi.',
     'areYouSure'                           => 'Anda yakin?',
     'clickHereToVerify'                    => 'Klik di sini untuk memverifikasi',
+    'cancelOrder'                          => 'Batalkan Pesanan',
     'create'                               => 'Buat',
     'dashboard'                            => 'Dashboard',
     'delete'                               => 'Hapus',

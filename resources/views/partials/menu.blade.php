@@ -11,7 +11,7 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route("admin.home") }}">
                         <i class="fas fa-fw fa-tachometer-alt nav-icon">
@@ -177,12 +177,12 @@
                         </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route("admin.pembelians.index") }}" class="nav-link {{ request()->is("admin/pembelians") || request()->is("admin/pembelians/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.riwayatPesanan.index") }}" class="nav-link {{ request()->is("admin/riwayat-pesanan") || request()->is("admin/riwayat-pesanan/*") ? "active" : "" }}">
                                     <i class="fa-fw nav-icon fab fa-buysellads">
 
                                     </i>
                                     <p>
-                                        Riwayat Pemesanan
+                                        Riwayat Pesanan
                                     </p>
                                 </a>
                             </li>

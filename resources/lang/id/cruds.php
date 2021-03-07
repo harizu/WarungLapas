@@ -177,4 +177,15 @@ return [
         'title'          => 'Pemesanan',
         'title_singular' => 'Pemesanan',
     ],
+    'riwayatPesanan' => [
+        'title' => 'Riwayat Pesanan',
+        'fields' => [
+            'order_no'         => 'No. Pesanan',
+            'warga_binaan'     => 'Pesanan Untuk',
+            'total_pembayaran' => 'Total Transaksi',
+            'status'           => 'Status',
+            'expired_at'       => 'Kadaluarsa Pembayaran',
+            'created_at'       => 'Dipesan Pada',
+        ],
+    ],
 ];

@@ -12,7 +12,8 @@ use Illuminate\Support\Collection;
 
 class OrderService
 {
-    CONST TRANSACTION_TYPE = 'order';
+    const EXPIRATION_DATE_MODIFIER = '+3 hours';
+    const TRANSACTION_TYPE = 'order';
 
     public function makeOrder(int $person_ordering, int $order_for, $biaya_layanan, array $items)
     {
@@ -20,6 +21,9 @@ class OrderService
 
         $transactionCodeService = new TransactionCodeService();
         $transaction_date = Carbon::now()->toDateString();
+        $created_at = Carbon::now()->toDateTimeString();
+        $expired_at = Carbon::now()->add(static::EXPIRATION_DATE_MODIFIER)->toDateTimeString();
+
         $order_no = $transactionCodeService->generateCode(self::TRANSACTION_TYPE, $transaction_date);
 
         $order = Order::create([
@@ -28,6 +32,8 @@ class OrderService
             'warga_binaan_id' => $order_for,
             'total' => $order_details->sum('subtotal'),
             'biaya_layanan' => $biaya_layanan,
+            'expired_at' => $expired_at,
+            'created_at' => $created_at,
         ]);
 
         $order_details = $this->makeOrderDetails($order, $order_details);
@@ -58,5 +64,22 @@ class OrderService
                 'subtotal' => $produk->harga * $item['qty'],
             ];
         });
+    }
+
+    public function cancel(Order $order, $cancel_by_buyer = false)
+    {
+        if ($order->is_expired) {
+            return false;
+        }
+
+        if ($order->status !== Order::STATUS_NEW_ORDER) {
+            return false;
+        }
+
+        $order->status = $cancel_by_buyer
+            ? Order::STATUS_CANCELED_BY_BUYER
+            : Order::STATUS_CANCELED_BY_BUYER;
+
+        return $order->save();
     }
 }
