@@ -44,7 +44,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Penjualans
     Route::delete('penjualans/destroy', 'PenjualanController@massDestroy')->name('penjualans.massDestroy');
-    Route::resource('penjualans', 'PenjualanController');
+    Route::resource('penjualans', 'PenjualanController')->parameters(['penjualans' => 'order']);
+    Route::put('penjualans/{order}/reject', 'PenjualanController@reject')->name('penjualans.reject');
+    Route::put('penjualans/{order}/accept', 'PenjualanController@accept')->name('penjualans.accept');
+    Route::put('penjualans/{order}/complete', 'PenjualanController@complete')->name('penjualans.complete');
 
     // Pembelians
     Route::resource('pembelians', 'PembelianController', ['except' => ['create', 'store', 'edit', 'update', 'show', 'destroy']]);

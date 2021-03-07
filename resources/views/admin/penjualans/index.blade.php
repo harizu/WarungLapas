@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 @section('content')
 @can('penjualan_create')
-    <div style="margin-bottom: 10px;" class="row">
+    {{-- <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a class="btn btn-success" href="{{ route('admin.penjualans.create') }}">
                 {{ trans('global.add') }} {{ trans('cruds.penjualan.title_singular') }}
             </a>
         </div>
-    </div>
+    </div> --}}
 @endcan
 <div class="card">
     <div class="card-header">
@@ -22,19 +22,25 @@
 
                     </th>
                     <th>
-                        {{ trans('cruds.penjualan.fields.id') }}
+                        {{ trans('cruds.riwayatPesanan.fields.order_no') }}
                     </th>
                     <th>
-                        {{ trans('cruds.penjualan.fields.trx_no') }}
+                        {{ trans('cruds.riwayatPesanan.fields.buyer') }}
                     </th>
                     <th>
-                        {{ trans('cruds.penjualan.fields.product') }}
+                        {{ trans('cruds.riwayatPesanan.fields.warga_binaan') }}
                     </th>
                     <th>
-                        {{ trans('cruds.penjualan.fields.qty') }}
+                        {{ trans('cruds.riwayatPesanan.fields.total_pembayaran') }}
                     </th>
                     <th>
-                        {{ trans('cruds.penjualan.fields.total_price') }}
+                        {{ trans('cruds.riwayatPesanan.fields.created_at') }}
+                    </th>
+                    <th>
+                        {{ trans('cruds.riwayatPesanan.fields.expired_at') }}
+                    </th>
+                    <th>
+                        {{ trans('cruds.riwayatPesanan.fields.status') }}
                     </th>
                     <th>
                         &nbsp;
@@ -52,64 +58,36 @@
 @parent
 <script>
     $(function () {
-  let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('penjualan_delete')
-  let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
-  let deleteButton = {
-    text: deleteButtonTrans,
-    url: "{{ route('admin.penjualans.massDestroy') }}",
-    className: 'btn-danger',
-    action: function (e, dt, node, config) {
-      var ids = $.map(dt.rows({ selected: true }).data(), function (entry) {
-          return entry.id
-      });
 
-      if (ids.length === 0) {
-        alert('{{ trans('global.datatables.zero_selected') }}')
+        let dtOverrideGlobals = {
+            buttons: [],
+            processing: true,
+            serverSide: true,
+            retrieve: true,
+            aaSorting: [],
+            ajax: "{{ route('admin.penjualans.index') }}",
+            columns: [
+                { data: 'placeholder', name: 'placeholder' },
+                { data: 'order_no', name: 'order_no' },
+                { data: 'buyer', name: 'buyer' },
+                { data: 'warga_binaan', name: 'warga_binaan' },
+                { data: 'total_pembayaran', name: 'total_pembayaran' },
+                { data: 'created_at', name: 'created_at' },
+                { data: 'expired_at', name: 'expired_at' },
+                { data: 'status', name: 'status' },
+                { data: 'actions', name: '{{ trans('global.actions') }}' },
+            ],
+            orderCellsTop: true,
+            order: [[ 5, 'desc' ]],
+            pageLength: 100,
+        };
+        let table = $('.datatable-Penjualan').DataTable(dtOverrideGlobals);
+        $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
+            $($.fn.dataTable.tables(true)).DataTable()
+                .columns.adjust();
+        });
 
-        return
-      }
-
-      if (confirm('{{ trans('global.areYouSure') }}')) {
-        $.ajax({
-          headers: {'x-csrf-token': _token},
-          method: 'POST',
-          url: config.url,
-          data: { ids: ids, _method: 'DELETE' }})
-          .done(function () { location.reload() })
-      }
-    }
-  }
-  dtButtons.push(deleteButton)
-@endcan
-
-  let dtOverrideGlobals = {
-    buttons: dtButtons,
-    processing: true,
-    serverSide: true,
-    retrieve: true,
-    aaSorting: [],
-    ajax: "{{ route('admin.penjualans.index') }}",
-    columns: [
-      { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
-{ data: 'trx_no', name: 'trx_no' },
-{ data: 'product_nama_produk', name: 'product.nama_produk' },
-{ data: 'qty', name: 'qty' },
-{ data: 'total_price', name: 'total_price' },
-{ data: 'actions', name: '{{ trans('global.actions') }}' }
-    ],
-    orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
-    pageLength: 100,
-  };
-  let table = $('.datatable-Penjualan').DataTable(dtOverrideGlobals);
-  $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
-      $($.fn.dataTable.tables(true)).DataTable()
-          .columns.adjust();
-  });
-  
-});
+    });
 
 </script>
 @endsection

@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    const STATUS_CANCELED_BY_BUYER = -2;
-    const STATUS_CANCELED_BY_ADMIN = -1;
+    const STATUS_CANCELED = -2;
+    const STATUS_REJECTED = -1;
     const STATUS_NEW_ORDER = 0;
     const STATUS_ON_PROCESS = 1;
     const STATUS_COMPLETED = 2;
@@ -58,12 +58,12 @@ class Order extends Model
         }
 
         switch ($this->status) {
-            case static::STATUS_CANCELED_BY_BUYER:
-                return trans('status.order.canceledByBuyer');
+            case static::STATUS_CANCELED:
+                return trans('status.order.canceled');
                 break;
 
-            case static::STATUS_CANCELED_BY_ADMIN:
-                return trans('status.order.canceledByAdmin');
+            case static::STATUS_REJECTED:
+                return trans('status.order.rejected');
                 break;
 
             case static::STATUS_NEW_ORDER:

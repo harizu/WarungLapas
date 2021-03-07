@@ -2,8 +2,8 @@
 
 return [
     'order' => [
-        'canceledByAdmin'     => 'Dibatalkan',
-        'canceledByBuyer'      => 'Dibatalkan',
+        'rejected'            => 'Ditolak',
+        'canceled'            => 'Dibatalkan',
         'complete'            => 'Selesai',
         'expired'             => 'Expired',
         'unknown'             => 'N/A',

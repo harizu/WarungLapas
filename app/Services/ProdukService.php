@@ -14,6 +14,17 @@ class ProdukService
             ->exists();
     }
 
+    public function checkoutStock(int $id, int $qty)
+    {
+        $produk = Produk::lockForUpdate()->find($id);
+
+        if ($produk->qty <= 0 || $produk->qty < $qty) {
+            return false;
+        }
+
+        return $produk->decrement('qty', $qty);
+    }
+
     public function getNamaProdukById(int $id)
     {
         return Produk::withTrashed()->where('id', $id)->value('nama_produk');

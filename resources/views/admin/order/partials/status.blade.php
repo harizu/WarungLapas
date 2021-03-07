@@ -2,11 +2,11 @@
     <span class="badge badge-warning">{{ $order->status_name }}</span>
 @else
     @switch($order->status)
-        @case($order::STATUS_CANCELED_BY_BUYER)
+        @case($order::STATUS_CANCELED)
             <span class="badge badge-danger">{{ $order->status_name }}</span>
             @break
 
-        @case($order::STATUS_CANCELED_BY_ADMIN)
+        @case($order::STATUS_REJECTED)
             <span class="badge badge-danger">{{ $order->status_name }}</span>
             @break
 

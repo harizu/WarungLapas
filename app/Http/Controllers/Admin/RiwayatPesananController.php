@@ -61,7 +61,7 @@ class RiwayatPesananController extends Controller
                 return "";
             });
             $table->editColumn('status', function ($row) {
-                return view('admin.riwayatPesanan.partials.status', ['order' => $row]);
+                return view('admin.order.partials.status', ['order' => $row]);
             });
 
             $table->rawColumns(['actions', 'placeholder']);
@@ -85,8 +85,10 @@ class RiwayatPesananController extends Controller
     {
         abort_if(Gate::denies('pembelian_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $this->orderService->cancel($order, true);
+        if (!$this->orderService->cancel($order)) {
+            return redirect()->back()->with('error', 'Gagal membatalkan pesanan #' . $order->order_no);
+        }
 
-        return back();
+        return redirect()->back()->with('message', 'Pesanan #' . $order->order_no . ' dibatalkan');
     }
 }

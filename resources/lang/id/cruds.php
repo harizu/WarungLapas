@@ -181,6 +181,7 @@ return [
         'title' => 'Riwayat Pesanan',
         'fields' => [
             'order_no'         => 'No. Pesanan',
+            'buyer'            => 'Nama Pemesan',
             'warga_binaan'     => 'Pesanan Untuk',
             'total_pembayaran' => 'Total Transaksi',
             'status'           => 'Status',

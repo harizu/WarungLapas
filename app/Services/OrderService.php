@@ -66,7 +66,7 @@ class OrderService
         });
     }
 
-    public function cancel(Order $order, $cancel_by_buyer = false)
+    public function cancel(Order $order)
     {
         if ($order->is_expired) {
             return false;
@@ -76,9 +76,48 @@ class OrderService
             return false;
         }
 
-        $order->status = $cancel_by_buyer
-            ? Order::STATUS_CANCELED_BY_BUYER
-            : Order::STATUS_CANCELED_BY_BUYER;
+        $order->status = Order::STATUS_CANCELED;
+
+        return $order->save();
+    }
+
+    public function reject(Order $order)
+    {
+        if ($order->is_expired) {
+            return false;
+        }
+
+        if ($order->status !== Order::STATUS_NEW_ORDER) {
+            return false;
+        }
+
+        $order->status = Order::STATUS_REJECTED;
+
+        return $order->save();
+    }
+
+    public function accept(Order $order)
+    {
+        if ($order->is_expired) {
+            return false;
+        }
+
+        if ($order->status !== Order::STATUS_NEW_ORDER) {
+            return false;
+        }
+
+        $order->status = Order::STATUS_ON_PROCESS;
+
+        return $order->save();
+    }
+
+    public function complete(Order $order)
+    {
+        if ($order->status !== Order::STATUS_ON_PROCESS) {
+            return false;
+        }
+
+        $order->status = Order::STATUS_COMPLETED;
 
         return $order->save();
     }

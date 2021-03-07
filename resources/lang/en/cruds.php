@@ -181,6 +181,7 @@ return [
         'title'  => 'Order History',
         'fields' => [
             'order_no'         => 'Order No.',
+            'buyer'            => 'Buyer',
             'warga_binaan'     => 'Order For',
             'total_pembayaran' => 'Total Transaction',
             'status'           => 'Status',

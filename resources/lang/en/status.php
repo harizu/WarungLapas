@@ -2,8 +2,8 @@
 
 return [
     'order' => [
-        'canceledByAdmin'     => 'Canceled',
-        'canceledByBuyer'      => 'Canceled',
+        'rejected'            => 'Rejected',
+        'canceled'            => 'Canceled',
         'complete'            => 'Complete',
         'expired'             => 'Expired',
         'unknown'             => 'N/A',

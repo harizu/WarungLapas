@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label class="control-label d-block">Pesanan Untuk : <strong><span>{{ $order->wargaBinaan->nama_warga_binaan }}</span> (<span>{{ $order->wargaBinaan->nomor_registrasi }}</span>)</strong></label>
-                            @include('admin.riwayatPesanan.partials.status')
+                            @include('admin.order.partials.status')
                         </div>
                         <div class="col-md-12 mt-2">
                             <table class="table">
@@ -36,7 +36,7 @@
                                     @foreach ($order->details as $index => $detail)
                                         <tr id="produk{{ $detail->produk_id }}">
                                         <td class="item-no">{{ $index + 1 }}</td>
-                                        <td>{{ $detail->produk->nama_produk }}></td>
+                                        <td>{{ $detail->produk->nama_produk }}</td>
                                         <td class="item-qty">{{ $detail->qty }}</td>
                                         <td class="item-harga">{{ number_format($detail->harga, 0, '.', ',') }}</td>
                                         <td class="item-total">{{ number_format($detail->subtotal, 0, '.', ',') }}</td>
