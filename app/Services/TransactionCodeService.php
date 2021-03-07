@@ -22,14 +22,14 @@ class TransactionCodeService
             return TransactionCode::create([
                 'transaction_type' => $transaction_type,
                 'transaction_date' => $transaction_date,
-            ]);
+            ])->refresh(); // refresh to get default next number from db layer
         });
 
         $running_number = $current_code->next_number;
 
         // immediately increment next number after getting running number
         $current_code->increment('next_number');
-        $date_code = Carbon::parse($transaction_date)->format('Ymd');
+        $date_code = Carbon::parse($transaction_date)->format('ymd');
         $running_number = str_pad($running_number, config('transaction.running_number_pad'), "0", STR_PAD_LEFT);
 
         $code = "{$transaction_code}{$date_code}{$running_number}";
