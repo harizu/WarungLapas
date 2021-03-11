@@ -30,8 +30,7 @@ class CompleteOrderRequest extends FormRequest
         return [
             'attachments.*' => [
                 'required',
-                'file',
-                'mimes:jpg,jpeg,png'
+                'image',
             ],
         ];
     }

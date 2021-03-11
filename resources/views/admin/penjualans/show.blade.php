@@ -157,8 +157,6 @@
                     autoProcessQueue: false,
                     uploadMultiple: true,
                     parallelUploads: 5,
-                    maxFiles: 5,
-                    maxFilesize: 1,
                     acceptedFiles: 'image/jpg, image/jpeg, image/png,',
                     addRemoveLinks: true,
                     init: function () {

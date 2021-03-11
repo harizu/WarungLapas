@@ -118,9 +118,9 @@ class OrderService
         }
 
         foreach ($attachments as $attachment) {
-            $original_file_name = pathinfo($attachment->getClientOriginalName(), PATHINFO_FILENAME);
-
-            $order->addMedia($attachment)->usingFileName(time() . '_' . $original_file_name)->toMediaCollection('order_complete_attachments');
+            $order->addMedia($attachment)
+                ->usingFileName(uniqid() . '_' . trim($attachment->getClientOriginalName()))
+                ->toMediaCollection('order_complete_attachments');
         }
 
         $order->status = Order::STATUS_COMPLETED;
