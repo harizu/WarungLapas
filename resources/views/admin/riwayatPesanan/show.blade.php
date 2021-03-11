@@ -20,12 +20,12 @@
                         <div class="col-md-12">
                             <label class="control-label d-block">Pesanan Untuk : <strong><span>{{ $order->wargaBinaan->nama_warga_binaan }}</span> (<span>{{ $order->wargaBinaan->nomor_registrasi }}</span>)</strong></label>
                             @include('admin.order.partials.status')
-                            @if ($order->status === $order::STATUS_COMPLETED)
+                            @if ($order->status == $order::STATUS_COMPLETED)
                                 <div class="row">
                                     <div class="col-md-12"></div>
                                         @foreach ($order->order_complete_attachments as $attachment)
-                                        <a href="{{ $attachment->getUrl('preview') }}" target="_blank">
-                                            <img class="img-thumbnail img-bordered mx-1" src="{{ $attachment->getUrl('thumb') }}">
+                                        <a href="{{ $attachment->getFullUrl('preview') }}" target="_blank">
+                                            <img class="img-thumbnail img-bordered mx-1" src="{{ $attachment->getFullUrl('thumb') }}">
                                         </a>
                                         @endforeach
                                     </div>
