@@ -20,9 +20,5 @@
 @endif
 
 @if($row->status == $row::STATUS_ON_PROCESS)
-    <form action="{{ route('admin.penjualans.complete', $row->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-        <input type="hidden" name="_method" value="PUT">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <input type="submit" class="btn btn-xs btn-success" value="{{ trans('global.completeOrder') }}">
-    </form>
+    <a href="#" role="button" data-toggle="modal" data-target="#modal-complete-order" data-route="{{ route('admin.penjualans.complete', $row->id) }}" class="btn btn-xs btn-success complete-order">{{ trans('global.completeOrder') }}</a>
 @endif

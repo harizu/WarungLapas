@@ -111,10 +111,16 @@ class OrderService
         return $order->save();
     }
 
-    public function complete(Order $order)
+    public function complete(Order $order, array $attachments)
     {
         if ($order->status != Order::STATUS_ON_PROCESS) {
             return false;
+        }
+
+        foreach ($attachments as $attachment) {
+            $original_file_name = pathinfo($attachment->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $order->addMedia($attachment)->usingFileName(time() . '_' . $original_file_name)->toMediaCollection('order_complete_attachments');
         }
 
         $order->status = Order::STATUS_COMPLETED;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CompleteOrderRequest;
 use App\Http\Requests\MassDestroyPenjualanRequest;
 use App\Http\Requests\StorePenjualanRequest;
 use App\Http\Requests\UpdatePenjualanRequest;
@@ -178,14 +179,57 @@ class PenjualanController extends Controller
         }
     }
 
-    public function complete(Order $order)
+    public function complete(CompleteOrderRequest $request, Order $order)
     {
-        abort_if(Gate::denies('penjualan_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $validated = $request->validated();
+        $attachments = $validated['attachments'];
 
-        if (!$this->orderService->complete($order)) {
-            return redirect()->back()->with('error', 'Gagal menyelesaikan pesanan #'. $order->$order_no);
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
+
+        DB::beginTransaction();
+        try {
+            if (!$this->orderService->complete($order, $attachments)) {
+                DB::rollback();
+
+                $message = 'Gagal menyelesaikan pesanan #'. $order->$order_no;
+
+                if (!$request->ajax()) {
+                    return redirect()->back()->with('error', $message);
+                }
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                ]);
+            }
+
+            DB::commit();
+
+            $message = 'Pesanan #' . $order->order_no . ' telah selesai';
+
+            if (!$request->ajax()) {
+                return redirect()->back()->with('message', $message);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+
+        } catch (\Throwable $t) {
+            DB::rollback();
+
+            $message = 'Terjadi kesalahan pada server.';
+
+            if (!$request->ajax()) {
+                return redirect()->back()->with('error', $message);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+            ]);
         }
-
-        return redirect()->back()->with('message', 'Pesanan #' . $order->order_no . ' telah selesai');
     }
 }

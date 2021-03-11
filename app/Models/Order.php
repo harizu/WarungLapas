@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\Models\Media;
 
-class Order extends Model
+class Order extends Model implements HasMedia
 {
+    use HasMediaTrait;
+
     const STATUS_CANCELED = -2;
     const STATUS_REJECTED = -1;
     const STATUS_NEW_ORDER = 0;
@@ -26,6 +31,10 @@ class Order extends Model
         'created_at',
     ];
 
+    protected $appends = [
+        'order_complete_attachments',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -39,6 +48,12 @@ class Order extends Model
     public function details()
     {
         return $this->hasMany(OrderDetail::class);
+    }
+
+    public function registerMediaConversions(Media $media = null)
+    {
+        $this->addMediaConversion('thumb')->fit('crop', 50, 50);
+        $this->addMediaConversion('preview');
     }
 
     public function getTotalPembayaranAttribute()
@@ -82,5 +97,10 @@ class Order extends Model
                 return trans('status.order.unknown');
                 break;
         }
+    }
+
+    public function getOrderCompleteAttachmentsAttribute()
+    {
+        return $this->getMedia('order_complete_attachments');
     }
 }
