@@ -96,11 +96,7 @@
                                 @endif
 
                                 @if($order->status === $order::STATUS_ON_PROCESS)
-                                    <form action="{{ route('admin.penjualans.complete', $order->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                        <input type="hidden" name="_method" value="PUT">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="submit" class="btn btn-success" value="{{ trans('global.completeOrder') }}">
-                                    </form>
+                                <a href="#" role="button" data-toggle="modal" data-target="#modal-complete-order" data-route="{{ route('admin.penjualans.complete', $order->id) }}" class="btn btn-success complete-order">{{ trans('global.completeOrder') }}</a>
                                 @endif
                             </div>
                     </div>
@@ -110,8 +106,152 @@
     </div>
 </div>
 
+{{-- MODAL COMPLETE ORDER --}}
+<div class="modal fade" id="modal-complete-order" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-success" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Upload Bukti Pesanan Selesai</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-success" id="order-complete-success" style="display:none">
+                <strong id="order-complpete-success-message"></strong>
+            </div>
+            <div class="alert alert-danger" id="order-complete-alert" style="display:none;">
+                <strong id="order-complete-alert-message"></strong>
+            </div>
+            <form action="" method="POST" enctype="multipart/form-data" id="form-complete-order">
+                {{ csrf_field() }}
+                {{ method_field('PUT') }}
+                <div class="dropzone" id="complete-order-attachment" name="attachment">
+                    <div class="dz-message" data-dz-message><span>Klik disini untuk upload gambar</span></div>
+                    <div class="fallback">
+                            <input name="attachments[]" type="file" class="form-control" required multiple />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary" id="btn-complete-order">{{ trans('global.completeOrder') }}</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
+    <script>
+        Dropzone.autoDiscover = false;
 
+        $(function () {
+
+            let completeOrderDz = $('#complete-order-attachment').dropzone({
+                    url: '{{ route('admin.penjualans.complete', ':id') }}',
+                    headers : { 'X-CSRF-TOKEN' : '{{ csrf_token() }}' },
+                    paramName: 'attachments',
+                    autoProcessQueue: false,
+                    uploadMultiple: true,
+                    parallelUploads: 5,
+                    maxFiles: 5,
+                    maxFilesize: 1,
+                    acceptedFiles: 'image/jpg, image/jpeg, image/png,',
+                    addRemoveLinks: true,
+                    init: function () {
+                        let wrapperThis = this;
+
+                        // send day off request form
+                        $(document).on('click', '#btn-complete-order', function (e) {
+                            e.preventDefault();
+                            $(this).prop('disabled', true);
+                            if (!wrapperThis.files.length) {
+                                return alert('Foto pesanan selesai wajib di isi');
+                            }
+
+                            return wrapperThis.processQueue();
+                        });
+
+                        this.on("processing", function (file) {
+                            wrapperThis.options.url = $('#form-complete-order').attr('action');
+                        });
+
+                        this.on('sendingmultiple', function (data, xhr, formData) {
+                            formData.append("_method", "put");
+                        });
+
+                        this.on('errormultiple', function (files, response, xhr) {
+                            let errors = response.errors
+                            let errorKeys = Object.keys(errors)
+
+                            if (errorKeys.length) {
+                                let errorMessage = '<ul>'
+
+                                errorKeys.forEach(function (key) {
+                                    let errorMessageBags = errors[key]
+
+                                    errorMessageBags.forEach(function (message) {
+                                        errorMessage += '<li>' + message + '</li>'
+                                    })
+                                })
+
+                                errorMessage += '</ul>'
+
+                                $('#order-complete-alert-message').html(errorMessage);
+                                $('#order-complete-alert').show();
+
+                                wrapperThis.removeAllFiles();
+
+                                let dropzoneFilesCopy = files.slice(0);
+                                $.each(dropzoneFilesCopy, function(_, file) {
+                                if (file.status === Dropzone.ERROR) {
+                                        file.status = undefined;
+                                        file.accepted = undefined;
+                                }
+                                wrapperThis.addFile(file);
+                                })
+
+                                $('#btn-complete-order').prop('disabled', false);
+                            }
+                        });
+
+                        this.on('successmultiple', function (files, response) {
+                            wrapperThis.removeAllFiles();
+
+                            if (!response.success) {
+                                let dropzoneFilesCopy = files.slice(0);
+
+                                $.each(dropzoneFilesCopy, function(_, file) {
+                                if (file.status === Dropzone.ERROR) {
+                                        file.status = undefined;
+                                        file.accepted = undefined;
+                                }
+                                wrapperThis.addFile(file);
+                                })
+
+                                $('#order-complete-alert-message').html(response.message);
+                                $('#order-complete-alert').show();
+
+                                return $('#btn-complete-order').prop('disabled', false);
+                            }
+
+                            $('#order-complete-alert').hide();
+                            $('#order-complpete-success-message').html(response.message);
+                            $('#order-complete-success').show();
+
+                            location.reload();
+                        });
+                    }
+                });
+
+            $(document).on('click', '.complete-order', function () {
+                let route = $(this).data('route');
+
+                $('#form-complete-order').attr('action', route);
+            });
+            });
+    </script>
 @endsection
