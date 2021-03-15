@@ -4,7 +4,7 @@
     <div class="login-logo">
         <div class="login-logo">
             <a href="{{ route('admin.home') }}">
-                <img src="{{ asset(config('panel.logo'))}}" width="180px" />
+                <img src="{{ asset(config('panel.logo'))}}" width="350px" />
             </a>
         </div>
     </div>
