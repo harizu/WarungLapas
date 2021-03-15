@@ -44,7 +44,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Penjualans
     Route::delete('penjualans/destroy', 'PenjualanController@massDestroy')->name('penjualans.massDestroy');
-    Route::resource('penjualans', 'PenjualanController');
+    Route::resource('penjualans', 'PenjualanController')->parameters(['penjualans' => 'order']);
+    Route::put('penjualans/{order}/reject', 'PenjualanController@reject')->name('penjualans.reject');
+    Route::put('penjualans/{order}/accept', 'PenjualanController@accept')->name('penjualans.accept');
+    Route::put('penjualans/{order}/complete', 'PenjualanController@complete')->name('penjualans.complete');
 
     // Pembelians
     Route::resource('pembelians', 'PembelianController', ['except' => ['create', 'store', 'edit', 'update', 'show', 'destroy']]);
@@ -55,8 +58,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('pembelians/get-produk-by-kategori/{kategori}', 'PembelianController@getProdukListByKategori')->name('pembelians.get.produk.by.kategori');
     Route::get('pembelians/success', 'PembelianController@success')->name('pembelians.success');
 
-    // Riwayat Pembelians
-    Route::resource('riwayat-pembelians', 'RiwayatPembelianController', ['except' => ['create', 'store', 'edit', 'update', 'show', 'destroy']]);
+
+    Route::resource('riwayat-pesanan', 'RiwayatPesananController', ['only' => ['index', 'show']])
+        ->parameters([
+            'riwayat-pesanan' => 'order',
+        ])->names([
+            'index' => 'riwayatPesanan.index',
+            'show' => 'riwayatPesanan.show',
+        ]);
+    Route::put('riwayat-pesanan/{order}/cancel', 'RiwayatPesananController@cancel')->name('riwayatPesanan.cancel');
 
     Route::get('messenger', 'MessengerController@index')->name('messenger.index');
     Route::get('messenger/create', 'MessengerController@createTopic')->name('messenger.createTopic');

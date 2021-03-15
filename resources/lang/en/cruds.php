@@ -177,4 +177,16 @@ return [
         'title'          => 'Pembelian',
         'title_singular' => 'Pembelian',
     ],
+    'riwayatPesanan' => [
+        'title'  => 'Order History',
+        'fields' => [
+            'order_no'         => 'Order No.',
+            'buyer'            => 'Buyer',
+            'warga_binaan'     => 'Order For',
+            'total_pembayaran' => 'Total Transaction',
+            'status'           => 'Status',
+            'expired_at'       => 'Payment Expired At',
+            'created_at'       => 'Ordered At',
+        ],
+    ],
 ];

@@ -11,7 +11,7 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route("admin.home") }}">
                         <i class="fas fa-fw fa-tachometer-alt nav-icon">
@@ -151,7 +151,7 @@
                     </li>
                 @endcan
                 @can('belanja_access')
-                    <li class="nav-item has-treeview {{ request()->is("admin/pembelians*") ? "menu-open" : "" }} {{ request()->is("admin/riwayat-pembelians*") ? "menu-open" : "" }}">
+                    <li class="nav-item has-treeview {{ request()->is("admin/pembelians*") ? "menu-open" : "" }}">
                         <a class="nav-link nav-dropdown-toggle" href="#">
                             <i class="fa-fw nav-icon fas fa-shopping-cart">
 
@@ -177,12 +177,12 @@
                         </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route("admin.riwayat-pembelians.index") }}" class="nav-link {{ request()->is("admin/riwayat-pembelians") || request()->is("admin/riwayat-pembelians/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.riwayatPesanan.index") }}" class="nav-link {{ request()->is("admin/riwayat-pesanan") || request()->is("admin/riwayat-pesanan/*") ? "active" : "" }}">
                                     <i class="fa-fw nav-icon fa fa-history">
 
                                     </i>
                                     <p>
-                                        Riwayat Pemesanan
+                                        Riwayat Pesanan
                                     </p>
                                 </a>
                             </li>

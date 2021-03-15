@@ -55,6 +55,8 @@
                     </tr>
                    
                 </table>
+                <a href="https://wa.me/6281290263703" target="_blank">Konfirmasi WA</a> | 
+                <a href="{{ route('admin.riwayatPesanan.index') }}">Lihat Status Transaksi</a>
 
             </div>
         </div>

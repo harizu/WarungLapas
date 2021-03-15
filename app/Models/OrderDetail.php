@@ -12,4 +12,9 @@ class OrderDetail extends Model
         'harga',
         'subtotal',
     ];
+
+    public function produk()
+    {
+        return $this->belongsTo(Produk::class);
+    }
 }

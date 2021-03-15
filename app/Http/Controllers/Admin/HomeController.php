@@ -8,6 +8,12 @@ class HomeController
 {
     public function index()
     {
+        $is_role_user = strtolower(auth()->user()->roles[0]->title ?? '') == 'user';
+
+        if ($is_role_user) {
+            return view('user-home');
+        }
+
         $settings1 = [
             'chart_title'           => 'Warga Binaan',
             'chart_type'            => 'number_block',

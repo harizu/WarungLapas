@@ -90,39 +90,39 @@ class PembelianController extends Controller
         $pdo->exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
 
         DB::beginTransaction();
-        foreach ($data['item'] as $item) {
-            if (!$this->produkService->checkStockAvailability($item['id'], $item['qty'])) {
-                DB::rollback();
-
-                $nama_produk = $this->produkService->getNamaProdukById($item['id']);
-
-                return redirect()->back()->with('error', "Stok {$nama_produk} tidak tersedia.");
-            }
-        }
-
-        $data_step1 = session()->get(static::STEP_1_SESSION_DATA_KEY);
-
-        $user_id         = request()->user()->id;
-        $warga_binaan_id = $this->wargaBinaanService->getIdByNomorRegistrasi($data_step1['nomor_registrasi']);
-
-        if (!$order = $this->orderService->makeOrder($user_id, $warga_binaan_id, $data['biaya_layanan'], $data['item'])) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan pada server. Coba kembali beberapa saat lagi');
-        }
-
-        DB::commit();
-
-        session()->forget(static::STEP_1_SESSION_DATA_KEY);
-
-        return redirect()->route('admin.pembelians.success',[
-            'order_no'        => '#' . $order->order_no,
-            'total'           => $order->total_pembayaran,
-            'rekening_bank'   => config('transaction.rekening.bank'),
-            'rekening_no'     => config('transaction.rekening.no'),
-            'rekening_name'   => config('transaction.rekening.atas_nama'),
-            'payment_expired' => date('d M Y H:i:s'),
-        ]);
         try {
+            foreach ($data['item'] as $item) {
+                if (!$this->produkService->checkStockAvailability($item['id'], $item['qty'])) {
+                    DB::rollback();
+
+                    $nama_produk = $this->produkService->getNamaProdukById($item['id']);
+
+                    return redirect()->back()->with('error', "Stok {$nama_produk} tidak tersedia.");
+                }
+            }
+
+            $data_step1 = session()->get(static::STEP_1_SESSION_DATA_KEY);
+
+            $user_id         = request()->user()->id;
+            $warga_binaan_id = $this->wargaBinaanService->getIdByNomorRegistrasi($data_step1['nomor_registrasi']);
+
+            if (!$order = $this->orderService->makeOrder($user_id, $warga_binaan_id, $data['biaya_layanan'], $data['item'])) {
+                DB::rollback();
+                return redirect()->back()->with('error', 'Terjadi kesalahan pada server. Coba kembali beberapa saat lagi');
+            }
+
+            DB::commit();
+
+            session()->forget(static::STEP_1_SESSION_DATA_KEY);
+
+            return redirect()->route('admin.pembelians.success',[
+                'order_no'        => '#' . $order->order_no,
+                'total'           => $order->total_pembayaran,
+                'rekening_bank'   => config('transaction.rekening.bank'),
+                'rekening_no'     => config('transaction.rekening.no'),
+                'rekening_name'   => config('transaction.rekening.atas_nama'),
+                'payment_expired' => date('d M Y H:i:s', strtotime($order->expired_at)),
+            ]);
         } catch (\Throwable $t) {
             DB::rollback();
             return redirect()->back()->with('error', 'Terjadi kesalahan pada server. Coba kembali beberapa saat lagi');
