@@ -94,9 +94,9 @@
     Dropzone.autoDiscover = false;
 
     $(function () {
-
+        let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
         let dtOverrideGlobals = {
-            buttons: [],
+            buttons: dtButtons,
             processing: true,
             serverSide: true,
             retrieve: true,
