@@ -153,7 +153,7 @@ class HomeController
             'chart_title'           => 'Transaksi',
             'chart_type'            => 'number_block',
             'report_type'           => 'group_by_date',
-            'model'                 => 'App\Models\Penjualan',
+            'model'                 => 'App\Models\Order',
             'group_by_field'        => 'created_at',
             'group_by_period'       => 'day',
             'aggregate_function'    => 'count',
