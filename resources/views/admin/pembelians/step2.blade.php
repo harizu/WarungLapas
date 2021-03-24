@@ -278,6 +278,12 @@
             subTotal += (parseInt(harga) * parseInt(qty));
         });
 
+        if(subTotal > 10000){
+            biayaLayanan = env('biaya_layanan_1',1000);
+        }else{
+            biayaLayanan = env('biaya_layanan_2',500)
+        }
+
         grandTotal = subTotal + biayaLayanan;
 
         $('#pembelian-subtotal').text(subTotal.toLocaleString('id-ID'));
