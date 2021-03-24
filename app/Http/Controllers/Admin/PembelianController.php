@@ -118,7 +118,6 @@ class PembelianController extends Controller
             return redirect()->route('admin.pembelians.success',[
                 'order_no'        => '#' . $order->order_no,
                 'total'           => $order->total_pembayaran,
-                'biaya_layanan'   => $order->biaya_layanan,
                 'rekening_bank'   => config('transaction.rekening.bank'),
                 'rekening_no'     => config('transaction.rekening.no'),
                 'rekening_name'   => config('transaction.rekening.atas_nama'),

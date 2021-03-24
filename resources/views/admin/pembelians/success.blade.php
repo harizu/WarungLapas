@@ -31,7 +31,7 @@
                     <tr>
                         <td>Total Pembayaran</td>
                         <td>:</td>
-                        <td>Rp {{ number_format($total+$biaya_layanan) ?? '' }}</td>
+                        <td>Rp {{ number_format($total) ?? '' }}</td>
                     </tr>
                     <tr>
                         <td>Nama Bank</td>
