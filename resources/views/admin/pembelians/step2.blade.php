@@ -279,12 +279,12 @@
         });
 
         if(subTotal > 10000){
-            biayaLayanan = "<?=env('biaya_layanan_1',1000);?>";
+            biayaLayanan = parseInt("<?=env('biaya_layanan_1',1000);?>");
         }else{
-            biayaLayanan = "<?=env('biaya_layanan_2',500);?>";
+            biayaLayanan = parseInt("<?=env('biaya_layanan_2',500);?>");
         }
 
-        grandTotal = subTotal + biayaLayanan;
+        grandTotal = parseInt(subTotal) + parseInt(biayaLayanan);
 
         $('#pembelian-subtotal').text(subTotal.toLocaleString('id-ID'));
         $('#pembelian-biaya-layanan').text(biayaLayanan.toLocaleString('id-ID'));
