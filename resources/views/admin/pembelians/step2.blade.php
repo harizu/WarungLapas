@@ -278,10 +278,12 @@
             subTotal += (parseInt(harga) * parseInt(qty));
         });
 
-        if(subTotal > 10000){
+        if(subTotal > 0 && subTotal < 10000) {
+            biayaLayanan = parseInt("<?=env('biaya_layanan_2',500);?>");
+        }else if(subTotal >= 10000) {
             biayaLayanan = parseInt("<?=env('biaya_layanan_1',1000);?>");
         }else{
-            biayaLayanan = parseInt("<?=env('biaya_layanan_2',500);?>");
+            biayaLayanan = parseInt(0);
         }
 
         grandTotal = parseInt(subTotal) + parseInt(biayaLayanan);
