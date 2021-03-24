@@ -71,7 +71,7 @@
                                 <button type="submit" class="btn btn-primary float-right" id="btn-submit-pesanan" disabled>Kirim Pesanan</button>
                         </div>
                     </div>
-                    <input type="hidden" name="biaya_layanan" value="0">
+                    <input type="hidden" id="biaya_layanan" name="biaya_layanan" value="0">
                 </form>
             </div>
         </div>
@@ -289,6 +289,7 @@
         grandTotal = parseInt(subTotal) + parseInt(biayaLayanan);
 
         $('#pembelian-subtotal').text(subTotal.toLocaleString('id-ID'));
+        $('#biaya_layanan').val(biayaLayanan);
         $('#pembelian-biaya-layanan').text(biayaLayanan.toLocaleString('id-ID'));
         $('#pembelian-grandtotal').text(grandTotal.toLocaleString('id-ID'));
     }
